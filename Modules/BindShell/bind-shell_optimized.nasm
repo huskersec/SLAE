@@ -7,6 +7,7 @@
 ; Explanation:      
 ; number of bytes: original 114; now 96
 ; Version: 1.0
+;
 
 BITS 32
 global _start			

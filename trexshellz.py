@@ -7,7 +7,7 @@
 import sys
 import argparse
 
-#insert amazing trex ascii art here
+#insert super amazing trex ascii art here
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
     description='Description: Pass args for shellcode generation', 
