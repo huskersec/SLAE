@@ -37,9 +37,9 @@ parser_bindshell.add_argument("--LPORT", required=True, metavar='<port>', type=i
 
 parser_reverseshell = subparsers.add_parser('reverse_shell')
 parser_reverseshell.add_argument("--LHOST", required=True, metavar='<host>', 
-    help="specify ip for reverse shell")
+    help="specify ip for reverse shell - no octet should contain a 0")
 parser_reverseshell.add_argument("--LPORT", required=True, metavar='<port>', type=int, 
-    help="specify port for shell")
+    help="specify port for reverse shell - must be > 256 to avoid null bytes")
 
 parser_execvestack = subparsers.add_parser('execve_stack')
 
@@ -78,8 +78,12 @@ elif args.payload == 'reverse_shell':
     #print '%s payload selected w/ %s as host and %i as port' % (args.payload,args.LHOST,args.LPORT)
     args_host = args.LHOST
     args_port = args.LPORT
-    sys.path.insert("Modules/ReverseShell/")
-    import reverse_shell
+    if args.LPORT <= 256:
+        print "Please specify port greater than 256!"
+    #elif args.LHOST need to implement a check for IPs containing .0. 
+    else:
+        sys.path.insert(0,"Modules/ReverseShell/")
+        import reverse_shell
      
 elif args.payload == 'execve_stack':
     import execve_stack
