@@ -44,20 +44,22 @@ parser_reverseshell.add_argument("--LPORT", required=True, metavar='<port>', typ
 
 parser_execvestack = subparsers.add_parser('execve_stack')
 
-parser_custom = subparsers.add_parser('custom')
-parser_custom.add_argument("--SHELLCODE", required=True, metavar='<shellcode>', 
-    help="specify shellcode")
+#parser_custom = subparsers.add_parser('custom')
+#parser_custom.add_argument("--SHELLCODE", required=True, metavar='<shellcode>', 
+#    help="specify shellcode")
 
 
 ### option parsers ###
 parser.add_argument("--EGG", action='store_true', 
     help="specify egg hunter technique, egg is hex \"x90x50x90x50\"")
+parser.add_argument("--ORIGINAL", action='store_true',help="output original shellcode")
 parser.add_argument("--ENCODE", action='store_true', 
     help="specify the built-in encoding technique")
 parser.add_argument("--ANALYZE", action='store_true', help="analyze a given shellcode")
-parser.add_argument("--POLYMORPH", action='store_true', 
+parser.add_argument("--POLYMORPH", action='store_true',
     help="specify polymorphism to use on given shellcode")
 parser.add_argument("--CRYPT", action='store_true', help="specify the built-in crypter")
+parser.add_argument("--SHELLCODE", required=False, metavar='<shellcode>', help="specify shellcode to encode/encrypt")
 
 args = parser.parse_args()
 
@@ -96,9 +98,12 @@ elif args.payload == 'reverse_shell':
             sys.path.insert(0,"Modules/EggHunter/")
             import egg_hunter
 
-
 elif args.payload == 'execve_stack':
-    import execve_stack
+#    args_encode = args.ENCODE
+    args_shellcode = args.SHELLCODE
+    sys.path.insert(0,"Modules/Encoder/")
+    import rot_encoder
+
 
 elif args.payload == 'custom':
     args_shellcode = args.SHELLCODE
