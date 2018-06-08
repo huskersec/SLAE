@@ -30,7 +30,7 @@ else:
 #better way to print list as one string?
 sc = ''.join(code)
 
-print "payload: " + sc
+print "shellcode: " + sc
 
 #print('shellcode: {!r}.'.format(str1))
 
